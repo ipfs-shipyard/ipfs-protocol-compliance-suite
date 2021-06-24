@@ -19,6 +19,25 @@ Supported Tests:
 - XHR - ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi
 - Fetch - ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi
 
+## Other Tests
+
+Web Platform Tests: https://github.com/web-platform-tests/wpt
+
+Should we reuse the test harness from there?
+
+- [testharness.js](https://github.com/web-platform-tests/wpt/blob/master/resources/testharness.js)
+- [testharness report](https://github.com/web-platform-tests/wpt/blob/master/resources/testharnessreport.js)
+- [example test (custom element registry)](https://github.com/web-platform-tests/wpt/blob/master/custom-elements/custom-element-registry/define.html#L14)
+
+Guide for writing tests: https://web-platform-tests.org/writing-tests/
+
+## Logistics:
+
+- Host as a Github Pages website to load over HTTP
+- Set up a Pinata account (can this be replaced with an official IPFS account so the cost isn't stuck to Mauve?)
+- Publish with [Github Actions](https://github.com/marketplace/actions/ipfs-pinata-deploy-github-action)
+- Use separate build step to publish dependent content and generate a JS file for the main tests with IPFS hashes
+
 ## New effort
 
 - Test one feature at a time with easy to read output

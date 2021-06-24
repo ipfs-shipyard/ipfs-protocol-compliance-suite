@@ -1,0 +1,8 @@
+* {
+ /*
+ IPFS white background and IPFS navy color
+ Taken from UI Style Guide: https://github.com/ipfs-shipyard/ipfs-ui-style-guide
+ */
+ background: #edf0f4;
+ color: #0b3a53;
+}
