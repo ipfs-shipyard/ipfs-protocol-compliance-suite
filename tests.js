@@ -1,4 +1,18 @@
-/* global promise_test,assert_true,assert_equals,fetch,XMLHttpRequest,document */
+/* global
+promise_test,
+assert_true,
+assert_equals,
+assert_throws_dom,
+fetch,
+XMLHttpRequest,
+document,
+URL_IPFS_IMAGE_FILE,
+URL_IPFS_VIDEO_FILE,
+URL_IPFS_AUDIO_FILE,
+URL_IPFS_HTML_FILE,
+URL_IPFS_TEXT_FILE,
+URL_IPFS_CSS_FILE
+*/
 
 promise_test(async (t) => {
   const element = document.createElement('img')
@@ -78,11 +92,43 @@ promise_test(async () => {
 
   assert_true(element.contentWindow !== null, 'Loaded content')
 
-	// Code 18 is the cross origin error
+  // Code 18 is the cross origin error
   assert_throws_dom(18, () => element.contentWindow.location.href, 'Cross-origin protects frame')
 }, 'IPFS Iframe Tag')
-// promise_test(async () => {}, 'IPFS CSS Tag(`Style @import`)')
-// promise_test(async () => {}, 'IPFS CSS Tag(Link)')
+promise_test(async () => {
+  // TODO: Doesn't look like parsing errors are properly reported. :/
+  const element = document.createElement('style')
+
+  element.appendChild(document.createTextNode(`@import url("${URL_IPFS_CSS_FILE}")`))
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+}, 'IPFS CSS Tag(`Style @import`)')
+promise_test(async () => {
+  const element = document.createElement('link')
+
+  element.rel = 'stylesheet'
+  element.href = URL_IPFS_CSS_FILE
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+}, 'IPFS CSS Tag(Link)')
 // promise_test(async () => {}, 'IPFS Script Tag')
 // promise_test(async () => {}, 'IPFS Script Tag(module)')
 // promise_test(async () => {}, 'IPFS Script `import`')
