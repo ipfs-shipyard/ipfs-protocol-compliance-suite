@@ -1,0 +1,13 @@
+{
+  "standard": {
+    "envs": {
+      "browser": true,
+      "node": true
+    },
+    "ignore": [
+			"resources/",
+			"constants.js",
+			"constants-old.js"
+    ]
+  }
+}

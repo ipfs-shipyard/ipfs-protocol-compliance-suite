@@ -6,12 +6,16 @@ assert_throws_dom,
 fetch,
 XMLHttpRequest,
 document,
+Worker
 URL_IPFS_IMAGE_FILE,
 URL_IPFS_VIDEO_FILE,
 URL_IPFS_AUDIO_FILE,
 URL_IPFS_HTML_FILE,
 URL_IPFS_TEXT_FILE,
-URL_IPFS_CSS_FILE
+URL_IPFS_CSS_FILE,
+URL_IPFS_JS_FILE,
+URL_IPFS_JS_FILE_IMPORT,
+URL_IPFS_JS_FILE_IMPORT_DYNAMIC,
 */
 
 promise_test(async (t) => {
@@ -129,11 +133,93 @@ promise_test(async () => {
 
   await onLoad
 }, 'IPFS CSS Tag(Link)')
-// promise_test(async () => {}, 'IPFS Script Tag')
-// promise_test(async () => {}, 'IPFS Script Tag(module)')
-// promise_test(async () => {}, 'IPFS Script `import`')
-// promise_test(async () => {}, 'IPFS Script `import()`')
-// promise_test(async () => {}, 'IPFS Script `Worker()`')
+promise_test(async () => {
+  const element = document.createElement('script')
+
+  element.src = URL_IPFS_JS_FILE
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+
+  assert_true(true, 'Loaded content')
+}, 'IPFS Script Tag')
+promise_test(async () => {
+  const element = document.createElement('script')
+
+  element.src = URL_IPFS_JS_FILE
+  element.type = 'module'
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+
+  assert_true(true, 'Loaded content')
+}, 'IPFS Script Tag(module)')
+promise_test(async () => {
+  const element = document.createElement('script')
+
+  element.src = URL_IPFS_JS_FILE_IMPORT
+  element.type = 'module'
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+
+  assert_true(true, 'Loaded content')
+}, 'IPFS Script `import`')
+promise_test(async () => {
+  const element = document.createElement('script')
+
+  element.src = URL_IPFS_JS_FILE_IMPORT_DYNAMIC
+  element.type = 'module'
+
+  const onLoad = new Promise((resolve, reject) => {
+    element.onload = resolve
+    element.onerror = reject
+  })
+
+  // t.add_cleanup(async () => document.body.removeChild(element))
+
+  document.body.appendChild(element)
+
+  await onLoad
+
+  assert_true(true, 'Loaded content')
+}, 'IPFS Script `import()`')
+promise_test(async () => {
+  const worker = new Worker(URL_IPFS_JS_FILE)
+
+  const onLoad = new Promise((resolve, reject) => {
+    worker.onmessage = resolve
+    worker.onerror = reject
+  })
+
+  const message = await onLoad
+
+  assert_true(message.example, 'Got example message from worker')
+}, 'IPFS Script `Worker()`')
 // promise_test(async () => {}, 'IPFS Script `ServiceWorker`')
 // promise_test(async () => {}, 'IPFS Navigate via HREF')
 promise_test(async () => {
