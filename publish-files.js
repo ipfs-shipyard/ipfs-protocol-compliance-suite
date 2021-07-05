@@ -5,6 +5,8 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs').promises
 
+const IPNS_DOMAIN = 'ipns://ipfs-compliance.mauve.moe/'
+
 const FILES_TO_CONSTANTS = new Map([
   ['files', 'URL_IPFS_MEDIA'],
   ['files/example.txt', 'URL_IPFS_TEXT_FILE_RAW'],
@@ -28,7 +30,20 @@ const CONSTANTS = new Map([
   ['URL_IPFS_HTML_FILE', '${URL_IPFS_MEDIA}/example.html'],
   ['URL_IPFS_DIRECTORY_NO_INDEX', '${URL_IPFS_MEDIA}/no-index/'],
   ['URL_IPFS_DIRECTORY_WITH_INDEX', '${URL_IPFS_MEDIA}/with-index/'],
-  ['URL_IPFS_DIRECTORY_WITH_FILE', '${URL_IPFS_MEDIA}/with-file/']
+  ['URL_IPFS_DIRECTORY_WITH_FILE', '${URL_IPFS_MEDIA}/with-file/'],
+  ['URL_IPNS_MEDIA', IPNS_DOMAIN],
+  ['URL_IPNS_TEXT_FILE', '${URL_IPNS_MEDIA}/example.txt'],
+  ['URL_IPNS_IMAGE_FILE', '${URL_IPNS_MEDIA}/ipfs-logo.svg'],
+  ['URL_IPNS_VIDEO_FILE', '${URL_IPNS_MEDIA}/IPFS.mp4'],
+  ['URL_IPNS_AUDIO_FILE', '${URL_IPNS_MEDIA}/ipfs.mp3'],
+  ['URL_IPNS_JS_FILE', '${URL_IPNS_MEDIA}/example.js'],
+  ['URL_IPNS_JS_FILE_IMPORT', '${URL_IPNS_MEDIA}/js/import-example.js'],
+  ['URL_IPNS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPNS_MEDIA}/js/import-example-dynamic.js'],
+  ['URL_IPNS_CSS_FILE', '${URL_IPNS_MEDIA}/example.css'],
+  ['URL_IPNS_HTML_FILE', '${URL_IPNS_MEDIA}/example.html'],
+  ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}/no-index/'],
+  ['URL_IPNS_DIRECTORY_WITH_INDEX', '${URL_IPNS_MEDIA}/with-index/'],
+  ['URL_IPNS_DIRECTORY_WITH_FILE', '${URL_IPNS_MEDIA}/with-file/']
 ])
 
 run().catch((e) => {
@@ -62,7 +77,7 @@ async function run () {
     const hash = fileMap.get(path)
     if (!hash) throw new Error('Missing file in published folder:' + path)
     const url = `ipfs://${hash}/`
-    constantsFile += `const ${name} = '${url}'\n`
+    constantsFile += `export const ${name} = '${url}'\n`
   }
 
   constantsFile += '\n// Relative paths\n'
@@ -70,7 +85,7 @@ async function run () {
   const BACKTIK = '`'
 
   for (const [name, path] of CONSTANTS) {
-    constantsFile += `const ${name} = ${BACKTIK}${path}${BACKTIK}\n`
+    constantsFile += `export const ${name} = ${BACKTIK}${path}${BACKTIK}\n`
   }
 
   // console.log(constantsFile)

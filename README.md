@@ -1,7 +1,16 @@
 # ipfs-protocol-compliance-suite
-A set of HTML pages to test a browser's compliance with `ipfs://` URLs.
+A set of HTML pages to test a browser's compliance with `ipfs://` and `ipns://` URLs.
 
 Progress: https://github.com/ipfs/community/discussions/573
+
+## Publishing:
+
+- Set up an IPFS node
+- Make sure the `IPNS_DOMAIN` URL in `publish-files.js` is correct
+- Run `publish-files.js`
+- Pin the IPFS URL somewhere like Pinata
+- Update the DNS domain to point to the IPFS URL using DNSLink
+- Commit and push the changes (thus updating gh-pages)
 
 ## Prior Effort:
 
