@@ -86,31 +86,6 @@ for (const urlKey of makePermutations('AUDIO_FILE')) {
   }, `IPFS Audio Tag - ${urlKey}`)
 }
 
-for (const urlKey of makePermutations('HTML_FILE')) {
-  promise_test(async (t) => {
-    const element = document.createElement('iframe')
-
-    element.src = CONSTANTS[urlKey]
-
-    const onLoad = new Promise((resolve, reject) => {
-      element.onload = resolve
-      element.onerror = reject
-    })
-
-    // Comment out to debug
-    t.add_cleanup(async () => document.body.removeChild(element))
-
-    document.body.appendChild(element)
-
-    await onLoad
-
-    assert_true(element.contentWindow !== null, 'Loaded content')
-
-    // Code 18 is the cross origin error
-    assert_throws_dom(18, () => element.contentWindow.location.href, 'Cross-origin protects frame')
-  }, `IPFS Iframe Tag - ${urlKey}`)
-}
-
 for (const urlKey of makePermutations('CSS_FILE')) {
   promise_test(async (t) => {
   // TODO: Doesn't look like parsing errors are properly reported. :/
@@ -288,4 +263,30 @@ for (const urlKey of makePermutations('TEXT_FILE')) {
 
     assert_equals(text, 'Hello World\n', 'Got expected text')
   }, `IPFS Fetch Request - ${urlKey}`)
+}
+
+
+for (const urlKey of makePermutations('HTML_FILE')) {
+  promise_test(async (t) => {
+    const element = document.createElement('iframe')
+
+    element.src = CONSTANTS[urlKey]
+
+    const onLoad = new Promise((resolve, reject) => {
+      element.onload = resolve
+      element.onerror = reject
+    })
+
+    // Comment out to debug
+    t.add_cleanup(async () => document.body.removeChild(element))
+
+    document.body.appendChild(element)
+
+    await onLoad
+
+    assert_true(element.contentWindow !== null, 'Loaded content')
+
+    // Code 18 is the cross origin error
+    assert_throws_dom(18, () => element.contentWindow.location.href, 'Cross-origin protects frame')
+  }, `IPFS Iframe Tag - ${urlKey}`)
 }
