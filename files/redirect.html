@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<title>Redirecting</title>
+<script>
+const url = new URL(window.location.href)
+const toLoad = url.searchParams.get('load')
+setTimeout(() => {
+  window.location.href = toLoad
+}, 500)
+</script>

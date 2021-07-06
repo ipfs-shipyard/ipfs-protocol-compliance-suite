@@ -3,6 +3,37 @@ A set of HTML pages to test a browser's compliance with `ipfs://` and `ipns://` 
 
 Progress: https://github.com/ipfs/community/discussions/573
 
+## How this works:
+
+- Successor to [ipfs-protocol-handler-support-tests](https://github.com/ipfs/in-web-browsers/blob/master/docs/ipfs-protocol-handler-support-tests.html)
+- Tests the browser's ability to handle IPFS URLS
+- Using the [Web Platform Tests](https://github.com/web-platform-tests/wpt) repository to define tests
+- Testing against a variety of file types and publishing methods (`ipfs://`, `ipns://`)
+- Tests:
+  - [x] `<img src>`
+  - [x] `<video src>`
+  - [x] `<audio src>`
+  - [x] `<style>@import url()`
+  - [x] `<link rel="stylesheet">`
+  - [ ] `<a href>` navigation (can't simulate clicks)
+  - [ ] `<object>` (hard to detect errors)
+  - [x] `<iframe src>`
+  - [x] `<script src>`
+  - [x] `<script src type="module">`
+  - [x] JS `import from`
+  - [x] JS `await import()`
+  - [ ] JS `new Worker()` (Getting errors with CORS)
+  - [x] JS `navigator.serviceWorker.register` 
+  - [ ] JS `window.location.href` navigation
+  - [x] JS `XMLHttpRequest()`
+  - [x] JS `fetch()`
+  - [x] Generate directory listing for folders
+  - [x] Render empty directories
+  - [x] Resolve `index.html` in a path
+  - [x] Resolve `NAME.html` for `/name/`
+  - [ ] JS `fetch('ipfs://', {method: 'POST'})`
+  - [ ] JS `fetch('ipns://', {method: 'POST'})`
+
 ## Publishing:
 
 - Set up an IPFS node
@@ -14,7 +45,6 @@ Progress: https://github.com/ipfs/community/discussions/573
 
 ## Prior Effort:
 
-[Link](https://github.com/ipfs/in-web-browsers/blob/master/docs/ipfs-protocol-handler-support-tests.html)
 
 Supported Tests:
 
@@ -44,7 +74,6 @@ Guide for writing tests: https://web-platform-tests.org/writing-tests/
 
 - Host as a Github Pages website to load over HTTP
 - Set up a Pinata account (can this be replaced with an official IPFS account so the cost isn't stuck to Mauve?)
-- Publish with [Github Actions](https://github.com/marketplace/actions/ipfs-pinata-deploy-github-action)
 - Use separate build step to publish dependent content and generate a JS file for the main tests with IPFS hashes
 
 ## New effort

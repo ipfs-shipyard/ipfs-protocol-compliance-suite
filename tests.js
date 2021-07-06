@@ -10,8 +10,12 @@ Worker */
 
 import * as CONSTANTS from './constants.js'
 
-function makePermutations (suffix) {
-  return [`URL_IPFS_${suffix}`, `URL_IPFS_${suffix}_RAW`, `URL_IPNS_${suffix}`]
+function makePermutations (suffix, noRaw = false) {
+  if (noRaw) {
+    return [`URL_IPFS_${suffix}`, `URL_IPNS_${suffix}`]
+  } else {
+    return [`URL_IPFS_${suffix}`, `URL_IPNS_${suffix}`, `URL_IPFS_${suffix}_RAW`]
+  }
 }
 
 for (const urlKey of makePermutations('IMAGE_FILE')) {
@@ -230,7 +234,20 @@ for (const urlKey of makePermutations('JS_FILE')) {
   }, `IPFS Script 'Worker()' - ${urlKey}`)
 }
 
-// promise_test(async (t) => {}, 'IPFS Script `ServiceWorker`')
+for (const urlKey of makePermutations('JS_FILE')) {
+  promise_test(async (t) => {
+    const registration = navigator.serviceWorker.register(CONSTANTS[urlKey])
+
+    assert_true(registration !== null, 'Service worker registration happend')
+
+    const worker = registration.installing || registration.waiting || registration.active
+
+    assert_true(worker !== null, 'Registration yielded a worker')
+
+    // TODO: Test webworker ability to intercept ipfs URLs
+  }, `IPFS Script 'navigator.serviceWorker.register' - ${urlKey}`)
+}
+
 // promise_test(async (t) => {}, 'IPFS Navigate via HREF')
 
 for (const urlKey of makePermutations('TEXT_FILE')) {
@@ -250,7 +267,7 @@ for (const urlKey of makePermutations('TEXT_FILE')) {
     assert_equals(xhr.status, 200, 'Response code OK')
 
     assert_equals(xhr.responseText, 'Hello World\n', 'Got expected text')
-  }, `IPFS XHR Request - ${urlKey}`)
+  }, `XHR Request - ${urlKey}`)
 }
 
 for (const urlKey of makePermutations('TEXT_FILE')) {
@@ -262,9 +279,60 @@ for (const urlKey of makePermutations('TEXT_FILE')) {
     const text = await response.text()
 
     assert_equals(text, 'Hello World\n', 'Got expected text')
-  }, `IPFS Fetch Request - ${urlKey}`)
+  }, `Fetch Request - ${urlKey}`)
 }
 
+for (const urlKey of makePermutations('DIRECTORY_EMPTY', true)) {
+  promise_test(async (t) => {
+    const response = await fetch(CONSTANTS[urlKey])
+
+    assert_true(response.ok, 'Response is OK')
+
+    await response.text()
+  }, `Fetch Empty Directory - ${urlKey}`)
+}
+
+for (const urlKey of makePermutations('DIRECTORY_NO_INDEX', true)) {
+  promise_test(async (t) => {
+    const response = await fetch(CONSTANTS[urlKey])
+
+    assert_true(response.ok, 'Response is OK')
+
+    const text = await response.text()
+
+    assert_true(text.includes('example.js'), 'Seeing expected file in directory')
+    assert_true(text.includes('empty/'), 'Seeing expected subdirectory in directory')
+  }, `Fetch Directory Listing - ${urlKey}`)
+}
+
+for (const urlKey of makePermutations('DIRECTORY_WITH_INDEX', true)) {
+  promise_test(async (t) => {
+    const response = await fetch(CONSTANTS[urlKey])
+
+    assert_true(response.ok, 'Response is OK')
+
+    const indexContent = `<!DOCTYPE html>
+<title>Hello World!</title>
+<h1>Hello World!</h1>
+`
+    const text = await response.text()
+    assert_equals(text, indexContent, 'Got expected text')
+  }, `Fetch Directory Listing With Index - ${urlKey}`)
+}
+
+for (const urlKey of makePermutations('DIRECTORY_WITH_FILE', true)) {
+  promise_test(async (t) => {
+    const response = await fetch(CONSTANTS[urlKey])
+
+    assert_true(response.ok, 'Response is OK')
+
+    const indexContent = `<title>Hello World!</title>
+<h1>Hello World!</h1>
+`
+    const text = await response.text()
+    assert_equals(text, indexContent, 'Got expected text')
+  }, `Fetch Directory Listing From File - ${urlKey}`)
+}
 
 for (const urlKey of makePermutations('HTML_FILE')) {
   promise_test(async (t) => {
@@ -289,4 +357,33 @@ for (const urlKey of makePermutations('HTML_FILE')) {
     // Code 18 is the cross origin error
     assert_throws_dom(18, () => element.contentWindow.location.href, 'Cross-origin protects frame')
   }, `IPFS Iframe Tag - ${urlKey}`)
+}
+
+for (const urlKey of makePermutations('HTML_FILE')) {
+  promise_test(async (t) => {
+    const element = document.createElement('iframe')
+
+    element.src = `${CONSTANTS.URL_IPFS_REDIRECT_FILE}?load=${urlKey}`
+
+    const onLoad = new Promise((resolve, reject) => {
+      element.onload = resolve
+      element.onerror = reject
+    })
+
+    // Comment out to debug
+    t.add_cleanup(async () => document.body.removeChild(element))
+
+    document.body.appendChild(element)
+
+    await onLoad
+
+    assert_true(element.contentWindow !== null, 'Loaded content')
+
+    await new Promise((resolve, reject) => {
+      element.onload = resolve
+      element.onerror = reject
+    })
+
+    assert_true(element.contentWindow !== null, 'Loaded content again')
+  }, `Redirect window.location.href - ${urlKey}`)
 }

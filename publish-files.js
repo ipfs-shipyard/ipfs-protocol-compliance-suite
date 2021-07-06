@@ -15,7 +15,8 @@ const FILES_TO_CONSTANTS = new Map([
   ['files/ipfs.mp3', 'URL_IPFS_AUDIO_FILE_RAW'],
   ['files/example.js', 'URL_IPFS_JS_FILE_RAW'],
   ['files/example.css', 'URL_IPFS_CSS_FILE_RAW'],
-  ['files/example.html', 'URL_IPFS_HTML_FILE_RAW']
+  ['files/example.html', 'URL_IPFS_HTML_FILE_RAW'],
+  ['files/redirect.html', 'URL_IPFS_REDIRECT_FILE_RAW']
 ])
 
 const CONSTANTS = new Map([
@@ -28,9 +29,11 @@ const CONSTANTS = new Map([
   ['URL_IPFS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPFS_MEDIA}/js/import-example-dynamic.js'],
   ['URL_IPFS_CSS_FILE', '${URL_IPFS_MEDIA}/example.css'],
   ['URL_IPFS_HTML_FILE', '${URL_IPFS_MEDIA}/example.html'],
-  ['URL_IPFS_DIRECTORY_NO_INDEX', '${URL_IPFS_MEDIA}/no-index/'],
+  ['URL_IPFS_DIRECTORY_NO_INDEX', '${URL_IPFS_MEDIA}/'],
   ['URL_IPFS_DIRECTORY_WITH_INDEX', '${URL_IPFS_MEDIA}/with-index/'],
-  ['URL_IPFS_DIRECTORY_WITH_FILE', '${URL_IPFS_MEDIA}/with-file/'],
+  ['URL_IPFS_DIRECTORY_WITH_FILE', '${URL_IPFS_MEDIA}/example'],
+  ['URL_IPFS_DIRECTORY_EMPTY', '${URL_IPFS_MEDIA}/empty'],
+  ['URL_IPFS_REDIRECT_FILE', '${URL_IPFS_MEDIA}/redirect.html'],
   ['URL_IPNS_MEDIA', IPNS_DOMAIN],
   ['URL_IPNS_TEXT_FILE', '${URL_IPNS_MEDIA}/example.txt'],
   ['URL_IPNS_IMAGE_FILE', '${URL_IPNS_MEDIA}/ipfs-logo.svg'],
@@ -40,10 +43,11 @@ const CONSTANTS = new Map([
   ['URL_IPNS_JS_FILE_IMPORT', '${URL_IPNS_MEDIA}/js/import-example.js'],
   ['URL_IPNS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPNS_MEDIA}/js/import-example-dynamic.js'],
   ['URL_IPNS_CSS_FILE', '${URL_IPNS_MEDIA}/example.css'],
-  ['URL_IPNS_HTML_FILE', '${URL_IPNS_MEDIA}/example.html'],
-  ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}/no-index/'],
+  ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}/'],
   ['URL_IPNS_DIRECTORY_WITH_INDEX', '${URL_IPNS_MEDIA}/with-index/'],
-  ['URL_IPNS_DIRECTORY_WITH_FILE', '${URL_IPNS_MEDIA}/with-file/']
+  ['URL_IPNS_DIRECTORY_WITH_FILE', '${URL_IPNS_MEDIA}/example'],
+  ['URL_IPNS_DIRECTORY_EMPTY', '${URL_IPNS_MEDIA}/empty'],
+  ['URL_IPNS_REDIRECT_FILE', '${URL_IPNS_MEDIA}/redirect.html']
 ])
 
 run().catch((e) => {
