@@ -40,6 +40,8 @@ for (const urlKey of makePermutations('IMAGE_FILE')) {
   }, `IPFS Image Tag - ${urlKey}`)
 }
 
+
+
 for (const urlKey of makePermutations('VIDEO_FILE')) {
   promise_test(async (t) => {
     const element = document.createElement('video')
@@ -332,6 +334,26 @@ for (const urlKey of makePermutations('DIRECTORY_WITH_FILE', true)) {
     const text = await response.text()
     assert_equals(text, indexContent, 'Got expected text')
   }, `Fetch Directory Listing From File - ${urlKey}`)
+}
+
+for (const urlKey of makePermutations('IMAGE_FILE')) {
+  promise_test(async (t) => {
+    const element = document.createElement('object')
+
+    element.data = CONSTANTS[urlKey]
+
+    const onLoad = new Promise((resolve, reject) => {
+      element.onload = resolve
+      element.onerror = reject
+    })
+
+    // Comment out to debug
+    t.add_cleanup(async () => document.body.removeChild(element))
+
+    document.body.appendChild(element)
+
+    await onLoad
+  }, `IPFS Object Tag - ${urlKey}`)
 }
 
 for (const urlKey of makePermutations('HTML_FILE')) {
