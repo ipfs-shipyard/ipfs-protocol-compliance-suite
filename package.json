@@ -5,7 +5,7 @@
       "node": true
     },
     "ignore": [
-			"resources/",
+			"testharness/",
 			"constants.js",
 			"constants-old.js"
     ]

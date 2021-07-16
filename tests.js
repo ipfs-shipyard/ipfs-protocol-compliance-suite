@@ -40,8 +40,6 @@ for (const urlKey of makePermutations('IMAGE_FILE')) {
   }, `IPFS Image Tag - ${urlKey}`)
 }
 
-
-
 for (const urlKey of makePermutations('VIDEO_FILE')) {
   promise_test(async (t) => {
     const element = document.createElement('video')
