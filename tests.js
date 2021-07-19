@@ -383,7 +383,7 @@ for (const urlKey of makePermutations('HTML_FILE')) {
   promise_test(async (t) => {
     const element = document.createElement('iframe')
 
-    element.src = `${CONSTANTS.URL_IPFS_REDIRECT_FILE}?load=${urlKey}`
+    element.src = `${CONSTANTS.URL_IPFS_REDIRECT_FILE}?load=${CONSTANTS[urlKey]}`
 
     const onLoad = new Promise((resolve, reject) => {
       element.onload = resolve

@@ -43,6 +43,7 @@ const CONSTANTS = new Map([
   ['URL_IPNS_JS_FILE_IMPORT', '${URL_IPNS_MEDIA}/js/import-example.js'],
   ['URL_IPNS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPNS_MEDIA}/js/import-example-dynamic.js'],
   ['URL_IPNS_CSS_FILE', '${URL_IPNS_MEDIA}/example.css'],
+  ['URL_IPNS_HTML_FILE', '${URL_IPNS_MEDIA}/example.html'],
   ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}/'],
   ['URL_IPNS_DIRECTORY_WITH_INDEX', '${URL_IPNS_MEDIA}/with-index/'],
   ['URL_IPNS_DIRECTORY_WITH_FILE', '${URL_IPNS_MEDIA}/example'],
@@ -80,7 +81,7 @@ async function run () {
   for (const [path, name] of FILES_TO_CONSTANTS) {
     const hash = fileMap.get(path)
     if (!hash) throw new Error('Missing file in published folder:' + path)
-    const url = `ipfs://${hash}/`
+    const url = `ipfs://${hash}/?filename=${path}`
     constantsFile += `export const ${name} = '${url}'\n`
   }
 
