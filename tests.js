@@ -317,21 +317,7 @@ for (const urlKey of makePermutations('DIRECTORY_WITH_INDEX', true)) {
 `
     const text = await response.text()
     assert_equals(text, indexContent, 'Got expected text')
-  }, `Fetch Directory Listing With Index - ${urlKey}`)
-}
-
-for (const urlKey of makePermutations('DIRECTORY_WITH_FILE', true)) {
-  promise_test(async (t) => {
-    const response = await fetch(CONSTANTS[urlKey])
-
-    assert_true(response.ok, 'Response is OK')
-
-    const indexContent = `<title>Hello World!</title>
-<h1>Hello World!</h1>
-`
-    const text = await response.text()
-    assert_equals(text, indexContent, 'Got expected text')
-  }, `Fetch Directory Listing From File - ${urlKey}`)
+  }, `Fetch Index.html contents from directory  - ${urlKey}`)
 }
 
 for (const urlKey of makePermutations('IMAGE_FILE')) {

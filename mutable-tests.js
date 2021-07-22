@@ -39,6 +39,7 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
 }, 'POST text file to IPFS without infohash')
+
 promise_test(async (t) => {
   const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
     method: 'POST',
@@ -72,6 +73,7 @@ promise_test(async (t) => {
   assert_true(listing.includes(TEST_FILE_NAME), 'First file shows up in parent folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Second file shows up in parent folder')
 }, 'POST text file to existing infohash')
+
 promise_test(async (t) => {
   const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
     method: 'POST',
@@ -104,6 +106,41 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in IPNS folder')
 }, 'POST IPFS URL to IPNS')
+
+promise_test(async (t) => {
+  const formData = new FormData()
+
+  formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
+  formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
+
+  const postResponse = await fetch('ipfs:///', {
+    method: 'POST',
+    body: formData
+  })
+
+  assert_true(postResponse.ok, 'Able to POST')
+
+  const url = await postResponse.text()
+
+  assert_true(url.startsWith('ipfs://'), 'Got an IPFS url for the content')
+  assert_true(url.endsWith('/'), 'URL is a directory')
+
+  const getResponse = await fetch(url + TEST_FILE_NAME)
+
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+
+  const listingRequest = await fetch(url)
+
+  const listing = await listingRequest.text()
+
+  assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
+  assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
+}, 'POST FormData with files to IPFS')
+
 promise_test(async (t) => {
   const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
     method: 'POST',

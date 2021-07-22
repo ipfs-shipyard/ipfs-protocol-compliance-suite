@@ -20,35 +20,33 @@ const FILES_TO_CONSTANTS = new Map([
 ])
 
 const CONSTANTS = new Map([
-  ['URL_IPFS_TEXT_FILE', '${URL_IPFS_MEDIA}/example.txt'],
-  ['URL_IPFS_IMAGE_FILE', '${URL_IPFS_MEDIA}/ipfs-logo.svg'],
-  ['URL_IPFS_VIDEO_FILE', '${URL_IPFS_MEDIA}/IPFS.mp4'],
-  ['URL_IPFS_AUDIO_FILE', '${URL_IPFS_MEDIA}/ipfs.mp3'],
-  ['URL_IPFS_JS_FILE', '${URL_IPFS_MEDIA}/example.js'],
-  ['URL_IPFS_JS_FILE_IMPORT', '${URL_IPFS_MEDIA}/js/import-example.js'],
-  ['URL_IPFS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPFS_MEDIA}/js/import-example-dynamic.js'],
-  ['URL_IPFS_CSS_FILE', '${URL_IPFS_MEDIA}/example.css'],
-  ['URL_IPFS_HTML_FILE', '${URL_IPFS_MEDIA}/example.html'],
-  ['URL_IPFS_DIRECTORY_NO_INDEX', '${URL_IPFS_MEDIA}/'],
-  ['URL_IPFS_DIRECTORY_WITH_INDEX', '${URL_IPFS_MEDIA}/with-index/'],
-  ['URL_IPFS_DIRECTORY_WITH_FILE', '${URL_IPFS_MEDIA}/example'],
-  ['URL_IPFS_DIRECTORY_EMPTY', '${URL_IPFS_MEDIA}/empty'],
-  ['URL_IPFS_REDIRECT_FILE', '${URL_IPFS_MEDIA}/redirect.html'],
+  ['URL_IPFS_TEXT_FILE', '${URL_IPFS_MEDIA}example.txt'],
+  ['URL_IPFS_IMAGE_FILE', '${URL_IPFS_MEDIA}ipfs-logo.svg'],
+  ['URL_IPFS_VIDEO_FILE', '${URL_IPFS_MEDIA}IPFS.mp4'],
+  ['URL_IPFS_AUDIO_FILE', '${URL_IPFS_MEDIA}ipfs.mp3'],
+  ['URL_IPFS_JS_FILE', '${URL_IPFS_MEDIA}example.js'],
+  ['URL_IPFS_JS_FILE_IMPORT', '${URL_IPFS_MEDIA}js/import-example.js'],
+  ['URL_IPFS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPFS_MEDIA}js/import-example-dynamic.js'],
+  ['URL_IPFS_CSS_FILE', '${URL_IPFS_MEDIA}example.css'],
+  ['URL_IPFS_HTML_FILE', '${URL_IPFS_MEDIA}example.html'],
+  ['URL_IPFS_DIRECTORY_NO_INDEX', '${URL_IPFS_MEDIA}'],
+  ['URL_IPFS_DIRECTORY_WITH_INDEX', '${URL_IPFS_MEDIA}with-index/'],
+  ['URL_IPFS_DIRECTORY_EMPTY', '${URL_IPFS_MEDIA}empty'],
+  ['URL_IPFS_REDIRECT_FILE', '${URL_IPFS_MEDIA}redirect.html'],
   ['URL_IPNS_MEDIA', IPNS_DOMAIN],
-  ['URL_IPNS_TEXT_FILE', '${URL_IPNS_MEDIA}/example.txt'],
-  ['URL_IPNS_IMAGE_FILE', '${URL_IPNS_MEDIA}/ipfs-logo.svg'],
-  ['URL_IPNS_VIDEO_FILE', '${URL_IPNS_MEDIA}/IPFS.mp4'],
-  ['URL_IPNS_AUDIO_FILE', '${URL_IPNS_MEDIA}/ipfs.mp3'],
-  ['URL_IPNS_JS_FILE', '${URL_IPNS_MEDIA}/example.js'],
-  ['URL_IPNS_JS_FILE_IMPORT', '${URL_IPNS_MEDIA}/js/import-example.js'],
-  ['URL_IPNS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPNS_MEDIA}/js/import-example-dynamic.js'],
-  ['URL_IPNS_CSS_FILE', '${URL_IPNS_MEDIA}/example.css'],
-  ['URL_IPNS_HTML_FILE', '${URL_IPNS_MEDIA}/example.html'],
-  ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}/'],
-  ['URL_IPNS_DIRECTORY_WITH_INDEX', '${URL_IPNS_MEDIA}/with-index/'],
-  ['URL_IPNS_DIRECTORY_WITH_FILE', '${URL_IPNS_MEDIA}/example'],
-  ['URL_IPNS_DIRECTORY_EMPTY', '${URL_IPNS_MEDIA}/empty'],
-  ['URL_IPNS_REDIRECT_FILE', '${URL_IPNS_MEDIA}/redirect.html']
+  ['URL_IPNS_TEXT_FILE', '${URL_IPNS_MEDIA}example.txt'],
+  ['URL_IPNS_IMAGE_FILE', '${URL_IPNS_MEDIA}ipfs-logo.svg'],
+  ['URL_IPNS_VIDEO_FILE', '${URL_IPNS_MEDIA}IPFS.mp4'],
+  ['URL_IPNS_AUDIO_FILE', '${URL_IPNS_MEDIA}ipfs.mp3'],
+  ['URL_IPNS_JS_FILE', '${URL_IPNS_MEDIA}example.js'],
+  ['URL_IPNS_JS_FILE_IMPORT', '${URL_IPNS_MEDIA}js/import-example.js'],
+  ['URL_IPNS_JS_FILE_IMPORT_DYNAMIC', '${URL_IPNS_MEDIA}js/import-example-dynamic.js'],
+  ['URL_IPNS_CSS_FILE', '${URL_IPNS_MEDIA}example.css'],
+  ['URL_IPNS_HTML_FILE', '${URL_IPNS_MEDIA}example.html'],
+  ['URL_IPNS_DIRECTORY_NO_INDEX', '${URL_IPNS_MEDIA}'],
+  ['URL_IPNS_DIRECTORY_WITH_INDEX', '${URL_IPNS_MEDIA}with-index/'],
+  ['URL_IPNS_DIRECTORY_EMPTY', '${URL_IPNS_MEDIA}empty'],
+  ['URL_IPNS_REDIRECT_FILE', '${URL_IPNS_MEDIA}redirect.html']
 ])
 
 run().catch((e) => {
@@ -81,8 +79,9 @@ async function run () {
   for (const [path, name] of FILES_TO_CONSTANTS) {
     const hash = fileMap.get(path)
     if (!hash) throw new Error('Missing file in published folder:' + path)
-    const url = `ipfs://${hash}/?filename=${path}`
-    constantsFile += `export const ${name} = '${url}'\n`
+    const url = `ipfs://${hash}`
+    const filenameSuffix = path === 'files' ? '/' : `/?filename=${path}`
+    constantsFile += `export const ${name} = '${url}${filenameSuffix}'\n`
   }
 
   constantsFile += '\n// Relative paths\n'
