@@ -1,7 +1,7 @@
 // Constants for test files, generated with publish-files.js
 
 // Raw hashes
-export const URL_IPFS_MEDIA = 'ipfs://bafybeic5jylb5b4tq66zfxpn6grd2d5eepefoq5kapk4p5e2rcs35nqxoa/'
+export const URL_IPFS_MEDIA = 'ipfs://bafybeidojbnpcrx3hrensu75uarng2jsp4xnen56qrwtl7qeij4456d2au/'
 export const URL_IPFS_TEXT_FILE_RAW = 'ipfs://bafkreigsvbhuxc3fbe36zd3tzwf6fr2k3vnjcg5gjxzhiwhnqiu5vackey/?filename=files/example.txt'
 export const URL_IPFS_IMAGE_FILE_RAW = 'ipfs://bafkreicncneocapbypwwe3gl47bzvr3pkpxmmobzn7zr2iaz67df4kjeiq/?filename=files/ipfs-logo.svg'
 export const URL_IPFS_VIDEO_FILE_RAW = 'ipfs://bafybeibuad3l4p6g7n3mqywkfshxzorlpkdfzcuaczzruqvudo5eqgarhi/?filename=files/IPFS.mp4'
@@ -25,7 +25,7 @@ export const URL_IPFS_DIRECTORY_NO_INDEX = `${URL_IPFS_MEDIA}`
 export const URL_IPFS_DIRECTORY_WITH_INDEX = `${URL_IPFS_MEDIA}with-index/`
 export const URL_IPFS_DIRECTORY_EMPTY = `${URL_IPFS_MEDIA}empty`
 export const URL_IPFS_REDIRECT_FILE = `${URL_IPFS_MEDIA}redirect.html`
-export const URL_IPNS_MEDIA = `ipns://ipfs-compliance.mauve.moe/`
+export const URL_IPNS_MEDIA = `ipns://ipfs-protocol-compliance-suite.on.fleek.co/`
 export const URL_IPNS_TEXT_FILE = `${URL_IPNS_MEDIA}example.txt`
 export const URL_IPNS_IMAGE_FILE = `${URL_IPNS_MEDIA}ipfs-logo.svg`
 export const URL_IPNS_VIDEO_FILE = `${URL_IPNS_MEDIA}IPFS.mp4`

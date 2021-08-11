@@ -5,7 +5,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs').promises
 
-const IPNS_DOMAIN = 'ipns://ipfs-compliance.mauve.moe/'
+const IPNS_DOMAIN = process.env.IPNS_DOMAIN || 'ipns://ipfs-protocol-compliance-suite.on.fleek.co/'
 
 const FILES_TO_CONSTANTS = new Map([
   ['files', 'URL_IPFS_MEDIA'],
