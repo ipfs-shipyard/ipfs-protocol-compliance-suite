@@ -45,7 +45,7 @@ This test suite is automatically published on Fleek via CI job.
 Manual steps are:
 
 - Set up an IPFS node
-- Make sure the `IPNS_DOMAIN` URL in `publish-files.js` is correct (or override it via environment variable of the same name)
+- Make sure the `IPNS_ROOT` URL in `publish-files.js` is correct (or override it via environment variable of the same name)
 - Run `publish-files.js`
 - Pin the IPFS URL somewhere like Pinata
 - Update the DNS domain to point to the IPFS URL using DNSLink
