@@ -57,7 +57,7 @@ run().catch((e) => {
 
 async function run () {
   console.log('Uploading to IPFS')
-  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 -r')
+  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 -r --raw-leaves=false')
 
   const lines = output.split(/\r?\n/)
 
