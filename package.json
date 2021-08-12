@@ -1,13 +1,18 @@
 {
+  "scripts": {
+    "lint": "standard",
+    "build": "node ./publish-files.js"
+  },
   "standard": {
     "envs": {
       "browser": true,
       "node": true
     },
     "ignore": [
-			"testharness/",
-			"constants.js",
-			"constants-old.js"
+      "files/js/import-example-dynamic.js",
+      "testharness/",
+      "constants.js",
+      "constants-old.js"
     ]
   }
 }

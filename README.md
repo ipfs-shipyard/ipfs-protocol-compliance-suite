@@ -36,8 +36,16 @@ Progress: https://github.com/ipfs/community/discussions/573
 
 ## Publishing:
 
+This test suite is automatically published on Fleek via CI job.
+
+`HEAD` of the `default` branch is published at https://ipfs-protocol-compliance-suite.on.fleek.co
+
+## Manual publishing:
+
+Manual steps are:
+
 - Set up an IPFS node
-- Make sure the `IPNS_DOMAIN` URL in `publish-files.js` is correct
+- Make sure the `IPNS_ROOT` URL in `publish-files.js` is correct (or override it via environment variable of the same name)
 - Run `publish-files.js`
 - Pin the IPFS URL somewhere like Pinata
 - Update the DNS domain to point to the IPFS URL using DNSLink

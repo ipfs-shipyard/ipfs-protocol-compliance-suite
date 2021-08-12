@@ -5,7 +5,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs').promises
 
-const IPNS_DOMAIN = 'ipns://ipfs-compliance.mauve.moe/'
+const IPNS_ROOT = process.env.IPNS_ROOT || 'ipns://ipfs-protocol-compliance-suite.on.fleek.co/files/'
 
 const FILES_TO_CONSTANTS = new Map([
   ['files', 'URL_IPFS_MEDIA'],
@@ -33,7 +33,7 @@ const CONSTANTS = new Map([
   ['URL_IPFS_DIRECTORY_WITH_INDEX', '${URL_IPFS_MEDIA}with-index/'],
   ['URL_IPFS_DIRECTORY_EMPTY', '${URL_IPFS_MEDIA}empty'],
   ['URL_IPFS_REDIRECT_FILE', '${URL_IPFS_MEDIA}redirect.html'],
-  ['URL_IPNS_MEDIA', IPNS_DOMAIN],
+  ['URL_IPNS_MEDIA', IPNS_ROOT],
   ['URL_IPNS_TEXT_FILE', '${URL_IPNS_MEDIA}example.txt'],
   ['URL_IPNS_IMAGE_FILE', '${URL_IPNS_MEDIA}ipfs-logo.svg'],
   ['URL_IPNS_VIDEO_FILE', '${URL_IPNS_MEDIA}IPFS.mp4'],
@@ -57,7 +57,7 @@ run().catch((e) => {
 
 async function run () {
   console.log('Uploading to IPFS')
-  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 -r --raw-leaves=false')
+  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 --raw-leaves=false -r')
 
   const lines = output.split(/\r?\n/)
 
