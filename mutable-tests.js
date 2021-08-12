@@ -86,7 +86,7 @@ promise_test(async (t) => {
 
   const base = new URL('./', url).href
 
-  const ipnsResponse = await fetch('ipns://compliance-suite-example/', {
+  const ipnsResponse = await fetch('ipns://compliance-suite-example1/', {
     method: 'POST',
     body: base
   })
