@@ -56,6 +56,12 @@ run().catch((e) => {
 })
 
 async function run () {
+  // This is necessary because git cannot create empty directories
+  console.log('Ensure empty dir exists')
+  const emptyDir = require('path').join(__dirname, 'files', 'empty')
+
+  await fs.mkdir(emptyDir, { recursive: true })
+
   console.log('Uploading to IPFS')
   const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 --raw-leaves=false -r')
 
