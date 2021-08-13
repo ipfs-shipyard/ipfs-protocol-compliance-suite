@@ -1,7 +1,7 @@
 // Constants for test files, generated with publish-files.js
 
 // Raw hashes
-export const URL_IPFS_MEDIA = 'ipfs://bafybeievhgvy6xq64x32fufpkwkhly32au7pkdmczdgyypg435w6ftmet4/'
+export const URL_IPFS_MEDIA = 'ipfs://bafybeic7n7s52drjp67yjklbiyxyzh3ddw35qr4wcuxkra6qmu37czxrmi/'
 export const URL_IPFS_TEXT_FILE_RAW = 'ipfs://bafybeiduiecxoeiqs3gyc6r7v3lymmhserldnpw62qjnhmqsulqjxjmtzi/?filename=files/example.txt'
 export const URL_IPFS_IMAGE_FILE_RAW = 'ipfs://bafybeihc4hti5ix4ds2tefhy35qd4c7n5as5cazdmksrxj7ipvcxm64h54/?filename=files/ipfs-logo.svg'
 export const URL_IPFS_VIDEO_FILE_RAW = 'ipfs://bafybeifmi5ykqzw4xnyarcx4wltdqid3ivacz3dr5qobskrajprs53uvj4/?filename=files/IPFS.mp4'
