@@ -30,9 +30,30 @@ Progress: https://github.com/ipfs/community/discussions/573
   - [x] Generate directory listing for folders
   - [x] Render empty directories
   - [x] Resolve `index.html` in a path
-  - [x] Resolve `NAME.html` for `/name/`
-  - [ ] JS `fetch('ipfs://', {method: 'POST'})`
-  - [ ] JS `fetch('ipns://', {method: 'POST'})`
+- `mutable.html` Tests (experimental, some things subject to change)
+  - [x] JS `fetch('ipfs://CID/example.txt', {method: 'POST'})`
+  - [x] JS `fetch('ipns://CID/', {method: 'POST'})`
+  - [x] JS `fetch('ipns://CID/example.txt', {method: 'POST'})`
+  - [x] JS `fetch('ipfs://CID/', {method: 'POST', body: new FormData})`
+  - [x] JS `fetch('ipfs://CID/example.txt', {method: 'DELETE'})`
+  - [x] JS `fetch('ipns://CID/example.txt', {method: 'DELETE'})`
+- `dag.html` Tests (experimental, some things subject to change)
+	- [x] GET `ipfs://CID/?format=CAR`
+	- [x] GET `ipfs://CID/?format=block`
+	- [x] GET `ipfs://CID/?format=dag-json`
+	- [x] GET `ipfs://CID/?format=dag-cbor`
+	- [x] POST `Content-Type: application/json` `?format=dag-cbor` & GET `?format=dag-cbor`
+	- [x] POST over existing CID to add to graph
+
+## Screenshots:
+
+Brave Browser (as of 2021-08-13)
+
+![Screenshot of Brave Browser with 34 tests passing, 7 failing, 1 timeouts, and 8 not run](screenshots/brave.png)
+
+Agregore Browser (as of 2021-08-13)
+
+![Screenshot of Agregore Browser with 45 tests passing, and 5 failing](screenshots/agregore.png)
 
 ## Publishing:
 
