@@ -125,6 +125,54 @@ promise_test(async (t) => {
 }, 'DELETE file from an infohash')
 
 promise_test(async (t) => {
+  const firstFileResponse = await fetch(`ipns://localhost?key=compliance-suite-example6/${TEST_FILE_NAME}`, {
+    method: 'PUT',
+    body: TEST_FILE_CONTENT
+  })
+
+  assert_true(firstFileResponse.status == 301, 'Able to PUT first file')
+
+  const url = await firstFileResponse.url
+
+  const base = new URL('./', url).href
+
+  const secondFileResponse = await fetch(new URL(`./${OTHER_TEST_FILE_NAME}`, base).href, {
+    method: 'PUT',
+    body: OTHER_TEST_FILE_CONTENT
+  })
+
+  assert_true(secondFileResponse.status == 301, 'Able to PUT second file')
+
+  const secondUrl = await secondFileResponse.url
+
+  const secondBase = new URL('./', secondUrl).href
+
+  const listingRequest = await fetch(secondBase)
+
+  const listing = await listingRequest.text()
+
+  assert_true(listing.includes(TEST_FILE_NAME), 'First file shows up in parent folder')
+  assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Second file shows up in parent folder')
+
+  const deleteResponse = await fetch(secondUrl, {
+    method: 'DELETE'
+  })
+
+  assert_true(deleteResponse.status == 301, 'Able to DELETE file URL')
+
+  const finalUrl = await deleteResponse.url
+
+  assert_true(finalUrl.startsWith('ipns://'), 'Got an IPNS url for the content')
+
+  const finalListingRequest = await fetch(finalUrl)
+
+  const finalListing = await finalListingRequest.text()
+
+  assert_true(finalListing.includes(TEST_FILE_NAME), 'First file still shows up in folder')
+  assert_true(!finalListing.includes(OTHER_TEST_FILE_NAME), 'Second file no longer shows up in folder')
+}, 'DELETE file from IPNS')
+
+promise_test(async (t) => {
   const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
@@ -146,16 +194,125 @@ promise_test(async (t) => {
   const ipnsUrl = await ipnsResponse.url
 
   assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
-  assert_true(ipnsUrl.endsWith('/'), 'Ends as a directory')
 
-  const listingRequest = await fetch(ipnsUrl)
+  const getResponse = await fetch(ipnsUrl)
 
-  assert_true(listingRequest.ok, 'Able to GET from IPNS')
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+}, 'POST IPFS URL to IPNS')
+
+promise_test(async (t) => {
+  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example2', {
+    method: 'PUT',
+    body: TEST_FILE_CONTENT
+  })
+
+  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+
+  const ipnsUrl = await ipnsResponse.url
+
+  assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
+
+  const getResponse = await fetch(ipnsUrl)
+
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+}, 'PUT IPFS file to IPNS')
+
+promise_test(async (t) => {
+  const ipnsResponse = await fetch('ipns://localhost/test?key=compliance-suite-example3', {
+    method: 'PUT',
+    body: TEST_FILE_CONTENT
+  })
+
+  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+
+  const ipnsUrl = await ipnsResponse.url
+
+  assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
+
+  const getResponse = await fetch(ipnsUrl)
+
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+}, 'PUT IPFS file to IPNS subpath')
+
+promise_test(async (t) => {
+  const formData = new FormData()
+
+  formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
+  formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
+
+  const putResponse = await fetch('ipns://localhost?key=compliance-suite-example5', {
+    method: 'PUT',
+    body: formData
+  })
+
+  assert_true(putResponse.status == 201, 'Able to PUT')
+
+  const url = putResponse.url
+
+  assert_true(url.startsWith('ipns://'), 'Got an IPNS url for the content')
+  assert_true(url.endsWith('/'), 'URL is a directory')
+
+  const getResponse = await fetch(url + TEST_FILE_NAME)
+
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+
+  const listingRequest = await fetch(url)
 
   const listing = await listingRequest.text()
 
-  assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in IPNS folder')
-}, 'POST IPFS URL to IPNS')
+  assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
+  assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
+}, 'PUT FormData to IPNS')
+
+promise_test(async (t) => {
+  const formData = new FormData()
+
+  formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
+  formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
+
+  const putResponse = await fetch('ipns://localhost/test?key=compliance-suite-example5', {
+    method: 'PUT',
+    body: formData
+  })
+
+  assert_true(putResponse.status == 201, 'Able to PUT')
+
+  const url = putResponse.url
+
+  assert_true(url.startsWith('ipns://'), 'Got an IPNS url for the content')
+  assert_true(url.endsWith('/'), 'URL is a directory')
+
+  const getResponse = await fetch(url + TEST_FILE_NAME)
+
+  assert_true(getResponse.ok, 'Able to use URL from POST')
+
+  const text = await getResponse.text()
+
+  assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
+
+  const listingRequest = await fetch(url)
+
+  const listing = await listingRequest.text()
+
+  assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
+  assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
+}, 'PUT FormData to IPNS subpath')
 
 promise_test(async (t) => {
   const formData = new FormData()
@@ -203,14 +360,14 @@ promise_test(async (t) => {
 
   const base = new URL('./', url).href
 
-  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example2', {
+  const ipnsResponse = await fetch(`ipns://localhost?key=compliance-suite-example4/${TEST_FILE_NAME}`, {
     method: 'POST',
     body: base
   })
 
   assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.url
+  const ipnsUrl = new URL('../', ipnsResponse.url)
 
   const otherFileURL = new URL(`/${OTHER_TEST_FILE_NAME}`, ipnsUrl)
 

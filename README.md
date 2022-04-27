@@ -35,14 +35,12 @@ Progress: https://github.com/ipfs/community/discussions/573
   - [x] JS `fetch('ipfs://<CID>/', {method: 'PUT', body: new FormData})`
   - [x] JS `fetch('ipfs://<CID>/example.txt', {method: 'DELETE'})`
   - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'POST', body: <CID>})`
-  - [ ] JS `fetch('ipns://localhost/example.txt?key=<name>', {method: 'POST', body: <CID>})`
-  - [ ] JS `fetch('ipns://<key>', {method: 'POST', body: <CID>})`
-  - [ ] JS `fetch('ipns://<key>/example.txt', {method: 'POST', body: <CID>})`
-  - [ ] JS `fetch('ipns://localhost?key=<name>', {method: 'PUT', body: file or formdata})`
-  - [ ] JS `fetch('ipns://localhost/example.txt?key=<name>', {method: 'PUT', body: file or formdata})`
-  - [ ] JS `fetch('ipns://<key>', {method: 'PUT', body: file or formdata})`
-  - [ ] JS `fetch('ipns://<key>/example.txt', {method: 'PUT', body: file or formdata})`
-  - [ ] JS `fetch('ipns://<CID>/example.txt', {method: 'DELETE'})`
+  - [x] JS `fetch('ipns://localhost/example.txt?key=<name>', {method: 'POST', body: <CID>})`
+  - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'PUT', body: file})`
+  - [x] JS `fetch('ipns://localhost/example?key=<name>', {method: 'PUT', body: file})`
+  - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'PUT', body: formdata})`
+  - [x] JS `fetch('ipns://localhost/example?key=<name>', {method: 'PUT', body: formdata})`
+  - [x] JS `fetch('ipns://<CID>/example.txt', {method: 'DELETE'})`
 - `dag.html` Tests (experimental, some things subject to change)
 	- [x] GET `ipfs://<CID>/?format=CAR`
 	- [x] GET `ipfs://<CID>/?format=block`
