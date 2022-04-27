@@ -12,14 +12,14 @@ const OTHER_TEST_FILE_NAME = 'example2.txt'
 const EMPTY_DIR_URL = 'ipfs://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354/'
 
 promise_test(async (t) => {
-  const postResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
-    method: 'POST',
+  const putResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(postResponse.ok, 'Able to POST')
+  assert_true(putResponse.status == 201, 'Able to PUT')
 
-  const url = await postResponse.text()
+  const url = await putResponse.url
 
   assert_true(url.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(url.endsWith(TEST_FILE_NAME), 'URL ends with the file name')
@@ -39,26 +39,26 @@ promise_test(async (t) => {
   const listing = await listingRequest.text()
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
-}, 'POST text file to IPFS without infohash')
+}, 'PUT text file to IPFS inside empty dir')
 
 promise_test(async (t) => {
-  const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
-    method: 'POST',
+  const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(firstFileResponse.ok, 'Able to post first file')
+  assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.text()
+  const url = await firstFileResponse.url
 
   const base = new URL('./', url).href
 
   const secondFileResponse = await fetch(new URL(`./${OTHER_TEST_FILE_NAME}`, base).href, {
-    method: 'POST',
+    method: 'PUT',
     body: OTHER_TEST_FILE_CONTENT
   })
 
-  assert_true(secondFileResponse.ok, 'Able to post second file')
+  assert_true(secondFileResponse.status == 201, 'Able to post second file')
 
   const secondUrl = await secondFileResponse.text()
 
@@ -73,28 +73,28 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'First file shows up in parent folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Second file shows up in parent folder')
-}, 'POST text file to existing infohash')
+}, 'PUT text file to existing infohash')
 
 promise_test(async (t) => {
-  const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
-    method: 'POST',
+  const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(firstFileResponse.ok, 'Able to post first file')
+  assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.text()
+  const url = await firstFileResponse.url
 
   const base = new URL('./', url).href
 
   const secondFileResponse = await fetch(new URL(`./${OTHER_TEST_FILE_NAME}`, base).href, {
-    method: 'POST',
+    method: 'PUT',
     body: OTHER_TEST_FILE_CONTENT
   })
 
-  assert_true(secondFileResponse.ok, 'Able to post second file')
+  assert_true(secondFileResponse.status == 201, 'Able to PUT second file')
 
-  const secondUrl = await secondFileResponse.text()
+  const secondUrl = await secondFileResponse.url
 
   const secondBase = new URL('./', secondUrl).href
 
@@ -109,9 +109,9 @@ promise_test(async (t) => {
     method: 'DELETE'
   })
 
-  assert_true(deleteResponse.ok, 'Able to DELETE file URL')
+  assert_true(deleteResponse.status == 201, 'Able to DELETE file URL')
 
-  const finalUrl = await deleteResponse.text()
+  const finalUrl = await deleteResponse.url
 
   assert_true(finalUrl.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(finalUrl.endsWith('/'), 'URL ends with a / to signify a directory')
@@ -125,25 +125,25 @@ promise_test(async (t) => {
 }, 'DELETE file from an infohash')
 
 promise_test(async (t) => {
-  const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
-    method: 'POST',
+  const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(firstFileResponse.ok, 'Able to post first file')
+  assert_true(firstFileResponse.status == 201, 'Able to post first file')
 
-  const url = await firstFileResponse.text()
+  const url = await firstFileResponse.url
 
   const base = new URL('./', url).href
 
-  const ipnsResponse = await fetch('ipns://compliance-suite-example/', {
+  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example', {
     method: 'POST',
     body: base
   })
 
-  assert_true(ipnsResponse.ok, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.text()
+  const ipnsUrl = await ipnsResponse.url
 
   assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
   assert_true(ipnsUrl.endsWith('/'), 'Ends as a directory')
@@ -163,14 +163,14 @@ promise_test(async (t) => {
   formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
   formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
 
-  const postResponse = await fetch(EMPTY_DIR_URL, {
-    method: 'POST',
+  const putResponse = await fetch(EMPTY_DIR_URL, {
+    method: 'PUT',
     body: formData
   })
 
-  assert_true(postResponse.ok, 'Able to POST')
+  assert_true(putResponse.status == 201, 'Able to PUT')
 
-  const url = await postResponse.text()
+  const url = await putResponse.url
 
   assert_true(url.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(url.endsWith('/'), 'URL is a directory')
@@ -189,30 +189,28 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
-}, 'POST FormData with files to IPFS')
+}, 'PUT FormData with files to IPFS')
 
 promise_test(async (t) => {
-  const firstFileResponse = await fetch(`ipfs://${TEST_FILE_NAME}`, {
-    method: 'POST',
+  const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(firstFileResponse.ok, 'Able to post first file')
+  assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.text()
+  const url = await firstFileResponse.url
 
   const base = new URL('./', url).href
 
-  // Note that the key pet name is a temporary measure
-  // This should be replaced with public keys once a key generation standard is figured out
-  const ipnsResponse = await fetch('ipns://compliance-suite-example2/', {
+  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example2', {
     method: 'POST',
     body: base
   })
 
-  assert_true(ipnsResponse.ok, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.text()
+  const ipnsUrl = await ipnsResponse.url
 
   const otherFileURL = new URL(`/${OTHER_TEST_FILE_NAME}`, ipnsUrl)
 
@@ -221,7 +219,7 @@ promise_test(async (t) => {
     body: OTHER_TEST_FILE_CONTENT
   })
 
-  assert_true(secondFileResponse.ok, 'Able to POST file to existing IPNS path')
+  assert_true(secondFileResponse.status == 301, 'Able to POST url to existing IPNS path')
 
   const listingRequest = await fetch(ipnsUrl)
 
@@ -231,4 +229,4 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'First file shows up in IPNS folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Second file shows up in IPNS folder')
-}, 'POST text file to IPNS with existing data')
+}, 'POST url to IPNS with existing data')
