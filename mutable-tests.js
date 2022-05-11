@@ -9,7 +9,7 @@ const TEST_FILE_CONTENT = 'Hello World'
 const TEST_FILE_NAME = 'example.txt'
 const OTHER_TEST_FILE_CONTENT = 'Goodby World'
 const OTHER_TEST_FILE_NAME = 'example2.txt'
-const EMPTY_DIR_URL = 'ipfs://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354/'
+const EMPTY_DIR_URL = 'ipfs://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354'
 
 promise_test(async (t) => {
   const putResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
@@ -19,7 +19,7 @@ promise_test(async (t) => {
 
   assert_true(putResponse.status == 201, 'Able to PUT')
 
-  const url = await putResponse.url
+  const url = await putResponse.headers.get("Location")
 
   assert_true(url.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(url.endsWith(TEST_FILE_NAME), 'URL ends with the file name')
@@ -49,7 +49,7 @@ promise_test(async (t) => {
 
   assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.url
+  const url = await firstFileResponse.headers.get("Location")
 
   const base = new URL('./', url).href
 
@@ -83,7 +83,7 @@ promise_test(async (t) => {
 
   assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.url
+  const url = await firstFileResponse.headers.get("Location")
 
   const base = new URL('./', url).href
 
@@ -94,7 +94,7 @@ promise_test(async (t) => {
 
   assert_true(secondFileResponse.status == 201, 'Able to PUT second file')
 
-  const secondUrl = await secondFileResponse.url
+  const secondUrl = await secondFileResponse.headers.get("Location")
 
   const secondBase = new URL('./', secondUrl).href
 
@@ -111,7 +111,7 @@ promise_test(async (t) => {
 
   assert_true(deleteResponse.status == 201, 'Able to DELETE file URL')
 
-  const finalUrl = await deleteResponse.url
+  const finalUrl = await deleteResponse.headers.get("Location")
 
   assert_true(finalUrl.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(finalUrl.endsWith('/'), 'URL ends with a / to signify a directory')
@@ -129,31 +129,23 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const firstFileResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
+  assert_true(firstFileResponse.status == 200, 'Able to PUT first file')
 
-  assert_true(firstFileResponse.status == 301, 'Able to PUT first file')
-
-  const url = await firstFileResponse.url
-
-  const base = new URL('./', url).href
+  const base = new URL('./', keyURL).href
 
   const secondFileResponse = await fetch(new URL(`./${OTHER_TEST_FILE_NAME}`, base).href, {
     method: 'PUT',
     body: OTHER_TEST_FILE_CONTENT
   })
+  assert_true(secondFileResponse.status == 200, 'Able to PUT second file')
 
-  assert_true(secondFileResponse.status == 301, 'Able to PUT second file')
-
-  const secondUrl = await secondFileResponse.url
-
-  const secondBase = new URL('./', secondUrl).href
-
-  const listingRequest = await fetch(secondBase)
+  const listingRequest = await fetch(base)
 
   const listing = await listingRequest.text()
 
@@ -164,13 +156,9 @@ promise_test(async (t) => {
     method: 'DELETE'
   })
 
-  assert_true(deleteResponse.status == 301, 'Able to DELETE file URL')
+  assert_true(deleteResponse.status == 200, 'Able to DELETE file URL')
 
-  const finalUrl = await deleteResponse.url
-
-  assert_true(finalUrl.startsWith('ipns://'), 'Got an IPNS url for the content')
-
-  const finalListingRequest = await fetch(finalUrl)
+  const finalListingRequest = await fetch(base)
 
   const finalListing = await finalListingRequest.text()
 
@@ -186,7 +174,7 @@ promise_test(async (t) => {
 
   assert_true(firstFileResponse.status == 201, 'Able to post first file')
 
-  const url = await firstFileResponse.url
+  const url = await firstFileResponse.headers.get("Location")
 
   const base = new URL('./', url).href
 
@@ -194,23 +182,16 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const ipnsResponse = await fetch(keyURL, {
     method: 'POST',
     body: base
   })
 
-  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.url
-
-  assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
-
-  const getResponse = await fetch(ipnsUrl)
-
-  assert_true(getResponse.ok, 'Able to use URL from POST')
-
+  const getResponse = await fetch(keyURL)
   const text = await getResponse.text()
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
@@ -221,23 +202,16 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const ipnsResponse = await fetch(keyURL, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.url
-
-  assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
-
-  const getResponse = await fetch(ipnsUrl)
-
-  assert_true(getResponse.ok, 'Able to use URL from POST')
-
+  const getResponse = await fetch(keyURL)
   const text = await getResponse.text()
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
@@ -248,23 +222,16 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const ipnsResponse = await fetch(`${keyURL}/test`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
 
-  const ipnsUrl = await ipnsResponse.url
-
-  assert_true(ipnsUrl.startsWith('ipns://'), 'Got an IPNS URL')
-
-  const getResponse = await fetch(ipnsUrl)
-
-  assert_true(getResponse.ok, 'Able to use URL from POST')
-
+  const getResponse = await fetch(keyURL)
   const text = await getResponse.text()
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
@@ -280,21 +247,16 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const putResponse = await fetch(keyURL, {
     method: 'PUT',
     body: formData
   })
 
-  assert_true(putResponse.status == 201, 'Able to PUT')
+  assert_true(putResponse.status == 200, 'Able to PUT')
 
-  const url = putResponse.url
-
-  assert_true(url.startsWith('ipns://'), 'Got an IPNS url for the content')
-  assert_true(url.endsWith('/'), 'URL is a directory')
-
-  const getResponse = await fetch(url + TEST_FILE_NAME)
+  const getResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`)
 
   assert_true(getResponse.ok, 'Able to use URL from POST')
 
@@ -302,7 +264,7 @@ promise_test(async (t) => {
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
 
-  const listingRequest = await fetch(url)
+  const listingRequest = await fetch(keyURL)
 
   const listing = await listingRequest.text()
 
@@ -320,21 +282,16 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const putResponse = await fetch(`${keyURL}/test`, {
     method: 'PUT',
     body: formData
   })
 
-  assert_true(putResponse.status == 201, 'Able to PUT')
+  assert_true(putResponse.status == 200, 'Able to PUT')
 
-  const url = putResponse.url
-
-  assert_true(url.startsWith('ipns://'), 'Got an IPNS url for the content')
-  assert_true(url.endsWith('/'), 'URL is a directory')
-
-  const getResponse = await fetch(url + TEST_FILE_NAME)
+  const getResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`)
 
   assert_true(getResponse.ok, 'Able to use URL from POST')
 
@@ -342,7 +299,7 @@ promise_test(async (t) => {
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
 
-  const listingRequest = await fetch(url)
+  const listingRequest = await fetch(keyURL)
 
   const listing = await listingRequest.text()
 
@@ -363,7 +320,7 @@ promise_test(async (t) => {
 
   assert_true(putResponse.status == 201, 'Able to PUT')
 
-  const url = await putResponse.url
+  const url = await putResponse.headers.get("Location")
 
   assert_true(url.startsWith('ipfs://'), 'Got an IPFS url for the content')
   assert_true(url.endsWith('/'), 'URL is a directory')
@@ -392,7 +349,7 @@ promise_test(async (t) => {
 
   assert_true(firstFileResponse.status == 201, 'Able to PUT first file')
 
-  const url = await firstFileResponse.url
+  const url = await firstFileResponse.headers.get("Location")
 
   const base = new URL('./', url).href
 
@@ -400,27 +357,23 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const ipnsResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
     method: 'POST',
     body: base
   })
 
-  assert_true(ipnsResponse.status == 301, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
 
-  const ipnsUrl = new URL('../', ipnsResponse.url)
-
-  const otherFileURL = new URL(`/${OTHER_TEST_FILE_NAME}`, ipnsUrl)
-
-  const secondFileResponse = await fetch(otherFileURL, {
+  const secondFileResponse = await fetch(`${keyURL}/${OTHER_TEST_FILE_NAME}`, {
     method: 'POST',
     body: OTHER_TEST_FILE_CONTENT
   })
 
-  assert_true(secondFileResponse.status == 301, 'Able to POST url to existing IPNS path')
+  assert_true(secondFileResponse.status == 200, 'Able to POST url to existing IPNS path')
 
-  const listingRequest = await fetch(ipnsUrl)
+  const listingRequest = await fetch(keyURL)
 
   assert_true(listingRequest.ok, 'Able to GET from IPNS')
 
@@ -440,12 +393,13 @@ promise_test(async (t) => {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
-  const keyURL = createKey.url
+  const keyURL = createKey.headers.get("Location")
 
   const getKey2 = await fetch(`ipns://localhost?key=compliance-suite-get-key`, {
     method: 'GET',
   })
-  assert_true(getKey2.status == 301, '301 redirect to key')
+  // Should redirect to key ^
+  assert_true(getKey2.status == 200, '200, redirected to key')
   assert_true(getKey2.url == keyURL, 'redirected to correct key URL')
 }, 'GET IPNS key')
 
