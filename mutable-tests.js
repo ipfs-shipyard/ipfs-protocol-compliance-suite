@@ -229,7 +229,7 @@ promise_test(async (t) => {
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to PUT url to ipns')
 
   const getResponse = await fetch(keyURL)
   const text = await getResponse.text()
@@ -394,6 +394,13 @@ promise_test(async (t) => {
   })
   assert_true(createKey.status == 201, 'Able to create key')
   const keyURL = createKey.headers.get("Location")
+
+  // Upload file so key resolves when GET is done later
+  const ipnsResponse = await fetch(`${keyURL}/test`, {
+    method: 'PUT',
+    body: TEST_FILE_CONTENT
+  })
+  assert_true(ipnsResponse.status == 200, 'Able to PUT url to ipns')
 
   const getKey2 = await fetch(`ipns://localhost?key=compliance-suite-get-key`, {
     method: 'GET',
