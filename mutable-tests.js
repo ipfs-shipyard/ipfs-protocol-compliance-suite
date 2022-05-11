@@ -125,7 +125,13 @@ promise_test(async (t) => {
 }, 'DELETE file from an infohash')
 
 promise_test(async (t) => {
-  const firstFileResponse = await fetch(`ipns://localhost?key=compliance-suite-example6/${TEST_FILE_NAME}`, {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example6`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const firstFileResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
@@ -184,7 +190,13 @@ promise_test(async (t) => {
 
   const base = new URL('./', url).href
 
-  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example', {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const ipnsResponse = await fetch(keyURL, {
     method: 'POST',
     body: base
   })
@@ -205,7 +217,13 @@ promise_test(async (t) => {
 }, 'POST IPFS URL to IPNS')
 
 promise_test(async (t) => {
-  const ipnsResponse = await fetch('ipns://localhost?key=compliance-suite-example2', {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example2`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const ipnsResponse = await fetch(keyURL, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
@@ -226,7 +244,13 @@ promise_test(async (t) => {
 }, 'PUT IPFS file to IPNS')
 
 promise_test(async (t) => {
-  const ipnsResponse = await fetch('ipns://localhost/test?key=compliance-suite-example3', {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example3`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const ipnsResponse = await fetch(`${keyURL}/test`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
@@ -252,7 +276,13 @@ promise_test(async (t) => {
   formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
   formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
 
-  const putResponse = await fetch('ipns://localhost?key=compliance-suite-example5', {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example5`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const putResponse = await fetch(keyURL, {
     method: 'PUT',
     body: formData
   })
@@ -286,7 +316,13 @@ promise_test(async (t) => {
   formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
   formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
 
-  const putResponse = await fetch('ipns://localhost/test?key=compliance-suite-example5', {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example7`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const putResponse = await fetch(`${keyURL}/test`, {
     method: 'PUT',
     body: formData
   })
@@ -360,7 +396,13 @@ promise_test(async (t) => {
 
   const base = new URL('./', url).href
 
-  const ipnsResponse = await fetch(`ipns://localhost?key=compliance-suite-example4/${TEST_FILE_NAME}`, {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example4`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const ipnsResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
     method: 'POST',
     body: base
   })
@@ -387,3 +429,39 @@ promise_test(async (t) => {
   assert_true(listing.includes(TEST_FILE_NAME), 'First file shows up in IPNS folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Second file shows up in IPNS folder')
 }, 'POST url to IPNS with existing data')
+
+promise_test(async (t) => {
+  const getKey = await fetch(`ipns://localhost?key=compliance-suite-get-key`, {
+    method: 'GET',
+  })
+  assert_true(getKey.status == 404, "key doesn't exist yet")
+
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-get-key`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+  const keyURL = createKey.url
+
+  const getKey2 = await fetch(`ipns://localhost?key=compliance-suite-get-key`, {
+    method: 'GET',
+  })
+  assert_true(getKey2.status == 301, '301 redirect to key')
+  assert_true(getKey2.url == keyURL, 'redirected to correct key URL')
+}, 'GET IPNS key')
+
+promise_test(async (t) => {
+  const createKey = await fetch(`ipns://localhost?key=compliance-suite-delete-key`, {
+    method: 'POST',
+  })
+  assert_true(createKey.status == 201, 'Able to create key')
+
+  const deleteKey = await fetch(`ipns://localhost?key=compliance-suite-delete-key`, {
+    method: 'DELETE',
+  })
+  assert_true(deleteKey.status == 200, '200, deleted key')
+
+  const getKey = await fetch(`ipns://localhost?key=compliance-suite-delete-key`, {
+    method: 'GET',
+  })
+  assert_true(getKey.status == 404, "404, key doesn't exist")
+}, 'DELETE IPNS key')
