@@ -413,7 +413,7 @@ promise_test(async (t) => {
   })
   // Should redirect to key ^
   assert_true(getKey2.status == 200, '200, redirected to key')
-  assert_true(getKey2.url == keyURL, 'redirected to correct key URL')
+  assert_true(new URL(getKey2.url).hostname == new URL(keyURL).hostname, 'redirected to correct key URL')
 }, 'GET IPNS key')
 
 promise_test(async (t) => {
