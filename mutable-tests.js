@@ -182,9 +182,7 @@ promise_test(async (t) => {
 
   const url = await firstFileResponse.headers.get("Location")
 
-  const base = new URL('./', url).href
-
-  const key = `POST-IPFS-TO-IPNS`
+  const key = `compliance-suite-${Date.now()}`
   const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
@@ -193,7 +191,7 @@ promise_test(async (t) => {
 
   const ipnsResponse = await fetch(keyURL, {
     method: 'POST',
-    body: base
+    body: url
   })
 
   assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
