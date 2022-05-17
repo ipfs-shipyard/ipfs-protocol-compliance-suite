@@ -11,7 +11,7 @@ const OTHER_TEST_FILE_CONTENT = 'Goodby World'
 const OTHER_TEST_FILE_NAME = 'example2.txt'
 const EMPTY_DIR_URL = 'ipfs://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354'
 
-setup({timeout_multiplier: 2})
+setup({ timeout_multiplier: 2 })
 
 promise_test(async (t) => {
   const putResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
@@ -127,13 +127,14 @@ promise_test(async (t) => {
 }, 'DELETE file from an infohash')
 
 promise_test(async (t) => {
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example6`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
   const keyURL = createKey.headers.get("Location")
 
-  const firstFileResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
+  const firstFileResponse = await fetch(`${keyURL}${TEST_FILE_NAME}`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
@@ -147,7 +148,7 @@ promise_test(async (t) => {
     method: 'PUT',
     body: OTHER_TEST_FILE_CONTENT
   })
- 
+
   assert_true(secondFileResponse.status == 200, 'Able to PUT second file')
 
   const listingRequest = await fetch(base)
@@ -169,7 +170,7 @@ promise_test(async (t) => {
 
   assert_true(finalListing.includes(TEST_FILE_NAME), 'First file still shows up in folder')
   assert_true(!finalListing.includes(OTHER_TEST_FILE_NAME), 'Second file no longer shows up in folder')
-}, 'DELETE file from IPNS')
+}, 'DELETE file from IPNS', { timeout: 120 * 1000 })
 
 promise_test(async (t) => {
   const firstFileResponse = await fetch(`${EMPTY_DIR_URL}/${TEST_FILE_NAME}`, {
@@ -181,9 +182,8 @@ promise_test(async (t) => {
 
   const url = await firstFileResponse.headers.get("Location")
 
-  const base = new URL('./', url).href
-
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
@@ -191,7 +191,7 @@ promise_test(async (t) => {
 
   const ipnsResponse = await fetch(keyURL, {
     method: 'POST',
-    body: base
+    body: url
   })
 
   assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
@@ -203,7 +203,8 @@ promise_test(async (t) => {
 }, 'POST IPFS URL to IPNS')
 
 promise_test(async (t) => {
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example2`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
@@ -214,29 +215,30 @@ promise_test(async (t) => {
     body: TEST_FILE_CONTENT
   })
 
-  assert_true(ipnsResponse.status == 200, 'Able to POST file to ipns')
+  assert_true(ipnsResponse.status == 200, 'Able to PUT file to ipns')
 
   const getResponse = await fetch(keyURL)
   const text = await getResponse.text()
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
-}, 'PUT IPFS file to IPNS', {timeout: 120 * 1000})
+}, 'PUT IPFS file to IPNS', { timeout: 120 * 1000 })
 
 promise_test(async (t) => {
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example3`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
   const keyURL = createKey.headers.get("Location")
 
-  const ipnsResponse = await fetch(`${keyURL}/test`, {
+  const ipnsResponse = await fetch(`${keyURL}test`, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
 
   assert_true(ipnsResponse.status == 200, 'Able to PUT url to ipns')
 
-  const getResponse = await fetch(`${keyURL}/test`)
+  const getResponse = await fetch(`${keyURL}test`)
   const text = await getResponse.text()
 
   assert_equals(text, TEST_FILE_CONTENT, 'Got content back out')
@@ -248,7 +250,8 @@ promise_test(async (t) => {
   formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
   formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
 
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example5`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
@@ -261,7 +264,7 @@ promise_test(async (t) => {
 
   assert_true(putResponse.status == 200, 'Able to PUT')
 
-  const getResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`)
+  const getResponse = await fetch(`${keyURL}${TEST_FILE_NAME}`)
 
   assert_true(getResponse.status === 200, 'Able to get uploaded file')
 
@@ -275,7 +278,7 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
-}, 'PUT FormData to IPNS')
+}, 'PUT FormData to IPNS', { timeout: 120 * 1000 })
 
 promise_test(async (t) => {
   const formData = new FormData()
@@ -283,7 +286,8 @@ promise_test(async (t) => {
   formData.append('file', new Blob([TEST_FILE_CONTENT]), TEST_FILE_NAME)
   formData.append('file', new Blob([OTHER_TEST_FILE_CONTENT]), OTHER_TEST_FILE_NAME)
 
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example7`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
@@ -310,7 +314,7 @@ promise_test(async (t) => {
 
   assert_true(listing.includes(TEST_FILE_NAME), 'File shows up in parent folder')
   assert_true(listing.includes(OTHER_TEST_FILE_NAME), 'Other file shows up in parent folder')
-}, 'PUT FormData to IPNS subpath')
+}, 'PUT FormData to IPNS subpath', { timeout: 120 * 1000 })
 
 promise_test(async (t) => {
   const formData = new FormData()
@@ -358,25 +362,37 @@ promise_test(async (t) => {
 
   const base = new URL('./', url).href
 
-  const createKey = await fetch(`ipns://localhost?key=compliance-suite-example4`, {
+  const key = `compliance-suite-${Date.now()}`
+  const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
   assert_true(createKey.status == 201, 'Able to create key')
   const keyURL = createKey.headers.get("Location")
 
-  const ipnsResponse = await fetch(`${keyURL}/${TEST_FILE_NAME}`, {
+  const ipnsResponse = await fetch(`${keyURL}${TEST_FILE_NAME}`, {
     method: 'POST',
     body: base
   })
 
   assert_true(ipnsResponse.status == 200, 'Able to POST url to ipns')
 
-  const secondFileResponse = await fetch(`${keyURL}/${OTHER_TEST_FILE_NAME}`, {
-    method: 'POST',
+  const secondFileResponse = await fetch(`${EMPTY_DIR_URL}/${OTHER_TEST_FILE_NAME}`, {
+    method: 'PUT',
     body: OTHER_TEST_FILE_CONTENT
   })
 
-  assert_true(secondFileResponse.status == 200, 'Able to POST url to existing IPNS path')
+  assert_true(secondFileResponse.status == 201, 'Able to PUT second file')
+
+  const url2 = await secondFileResponse.headers.get("Location")
+
+  const base2 = new URL('./', url2).href
+
+  const ipnsResponse2 = await fetch(`${keyURL}${OTHER_TEST_FILE_NAME}`, {
+    method: 'POST',
+    body: base2
+  })
+
+  assert_true(ipnsResponse2.status == 200, 'Able to POST url to existing IPNS key')
 
   const listingRequest = await fetch(keyURL)
 
@@ -389,7 +405,7 @@ promise_test(async (t) => {
 }, 'POST url to IPNS with existing data')
 
 promise_test(async (t) => {
-	const key = `compliance-suite-get-key-${Math.random()}`
+  const key = `compliance-suite-${Date.now()}`
   const getKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'GET',
   })
@@ -402,7 +418,7 @@ promise_test(async (t) => {
   const keyURL = createKey.headers.get("Location")
 
   // Upload file so key resolves when GET is done later
-  const ipnsResponse = await fetch(new URL('/test', keyURL).href, {
+  const ipnsResponse = await fetch(keyURL, {
     method: 'PUT',
     body: TEST_FILE_CONTENT
   })
@@ -417,7 +433,7 @@ promise_test(async (t) => {
 }, 'GET IPNS key')
 
 promise_test(async (t) => {
-	const key = `compliance-suite-delete-key-${Math.random()}`
+  const key = `compliance-suite-${Date.now()}`
   const createKey = await fetch(`ipns://localhost?key=${key}`, {
     method: 'POST',
   })
