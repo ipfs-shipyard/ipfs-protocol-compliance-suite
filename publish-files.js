@@ -63,7 +63,7 @@ async function run () {
   await fs.mkdir(emptyDir, { recursive: true })
 
   console.log('Uploading to IPFS')
-  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 --raw-leaves=false -r')
+  const { stdout: output } = await exec('ipfs add ./files/ --cid-version=1 --raw-leaves=false -r --api /ip4/127.0.0.1/tcp/5001')
 
   const lines = output.split(/\r?\n/)
 
