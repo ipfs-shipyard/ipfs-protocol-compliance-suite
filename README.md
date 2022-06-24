@@ -44,8 +44,8 @@ Progress: https://github.com/ipfs/community/discussions/573
   - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'GET})`
   - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'DELETE})`
 - `dag.html` Tests (experimental, some things subject to change)
-  - [x] GET `ipfs://<CID>/?format=CAR`
-  - [x] GET `ipfs://<CID>/?format=block`
+  - [x] GET `ipfs://<CID>/?format=car`
+  - [x] GET `ipfs://<CID>/?format=raw`
   - [x] GET `ipfs://<CID>/?format=dag-json`
   - [x] GET `ipfs://<CID>/?format=dag-cbor`
   - [x] POST `Content-Type: application/json` `?format=dag-cbor` & GET `?format=dag-cbor`
