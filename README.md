@@ -31,19 +31,25 @@ Progress: https://github.com/ipfs/community/discussions/573
   - [x] Render empty directories
   - [x] Resolve `index.html` in a path
 - `mutable.html` Tests (experimental, some things subject to change)
-  - [x] JS `fetch('ipfs://CID/example.txt', {method: 'POST'})`
-  - [x] JS `fetch('ipns://CID/', {method: 'POST'})`
-  - [x] JS `fetch('ipns://CID/example.txt', {method: 'POST'})`
-  - [x] JS `fetch('ipfs://CID/', {method: 'POST', body: new FormData})`
-  - [x] JS `fetch('ipfs://CID/example.txt', {method: 'DELETE'})`
-  - [x] JS `fetch('ipns://CID/example.txt', {method: 'DELETE'})`
+  - [x] JS `fetch('ipfs://<CID>/example.txt', {method: 'PUT'})`
+  - [x] JS `fetch('ipfs://<CID>/', {method: 'PUT', body: new FormData})`
+  - [x] JS `fetch('ipfs://<CID>/example.txt', {method: 'DELETE'})`
+  - [x] JS `fetch('ipns://<key>', {method: 'POST', body: <CID>})`
+  - [x] JS `fetch('ipns://<key>/example.txt', {method: 'POST', body: <CID>})`
+  - [x] JS `fetch('ipns://<key>', {method: 'PUT', body: file})`
+  - [x] JS `fetch('ipns://<key>/example', {method: 'PUT', body: file})`
+  - [x] JS `fetch('ipns://<key>', {method: 'PUT', body: formdata})`
+  - [x] JS `fetch('ipns://<key>/example', {method: 'PUT', body: formdata})`
+  - [x] JS `fetch('ipns://<key>/example.txt', {method: 'DELETE'})`
+  - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'GET})`
+  - [x] JS `fetch('ipns://localhost?key=<name>', {method: 'DELETE})`
 - `dag.html` Tests (experimental, some things subject to change)
-	- [x] GET `ipfs://CID/?format=CAR`
-	- [x] GET `ipfs://CID/?format=block`
-	- [x] GET `ipfs://CID/?format=dag-json`
-	- [x] GET `ipfs://CID/?format=dag-cbor`
-	- [x] POST `Content-Type: application/json` `?format=dag-cbor` & GET `?format=dag-cbor`
-	- [x] POST over existing CID to add to graph
+  - [x] GET `ipfs://<CID>/?format=car`
+  - [x] GET `ipfs://<CID>/?format=raw`
+  - [x] GET `ipfs://<CID>/?format=dag-json`
+  - [x] GET `ipfs://<CID>/?format=dag-cbor`
+  - [x] POST `Content-Type: application/json` `?format=dag-cbor` & GET `?format=dag-cbor`
+  - [x] POST over existing CID to add to graph
 
 ## Screenshots:
 
